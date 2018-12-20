@@ -11,7 +11,7 @@ void ASProjectileWeapon::Fire()
 	{
 		FVector Eyelocation;
 		FRotator EyeRotation;
-		MyOwner->GetActorEyesViewPoint(Eyelocation, EyeRotation); // Returns the actors eyelocation and eye rotation
+		MyOwner->GetActorEyesViewPoint(Eyelocation, EyeRotation); // Returns the actors eye location and eye rotation
 
 		FVector ShotDirection = EyeRotation.Vector();
 

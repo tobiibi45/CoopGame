@@ -31,6 +31,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	virtual void Fire();
 
+	void PlayerFireEffects();
+
 	//Sub class of damage that returns the type of damage that is caused
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	TSubclassOf<UDamageType> DamageType;
