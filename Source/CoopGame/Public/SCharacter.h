@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class ASWeapon;
+class USHealthComponent;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -19,6 +21,8 @@ public:
 	ASCharacter();
 
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 	//Moves character forward
 	void MoveForward(float Value);
@@ -39,6 +43,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USHealthComponent* HealthComp;
+
 	bool bWantsToZoom;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
@@ -50,12 +57,50 @@ protected:
 	/*Default FOV during get play*/
 	float DefaultFOV;
 
+	/*Allows the player to zoom in with weapon*/
 	void BeginZoom();
 
+	/*Allows the player to stop zooming in with weapon*/
 	void EndZoom();
 
-	ASWeapon* Cu
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
+	FName WeaponAttachSocketName;
+
+	/*Pointer class to weapon*/
+	ASWeapon* CurrentWeapon;
+
+	//Sub class of damage that returns the type of damage that is caused
+	UPROPERTY(EditDefaultsOnly,Category = "Player")
+	TSubclassOf<ASWeapon> StarterWeaponClass;
+
+	/*Allows the player to fire weapon*/
+	void StartFire();
+
+	/*Stops player from firing weapon*/
+	void StopFire();
+
+	/*Stops player from firing weapon*/
+	void ReloadWeapon();
+
+	UFUNCTION()
+	void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta,
+	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	/*Pawn Died Previously*/
+	UPROPERTY(BlueprintReadOnly, Category="Player")
+	bool bDied;
+
+	/*Can reload Previously*/
+	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	bool bIsReloading;
+
+	void SetIsReloading();
+
+	FTimerHandle TimerHandle_TimeTOReload;
+
 public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

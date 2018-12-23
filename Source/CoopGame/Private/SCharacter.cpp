@@ -4,6 +4,14 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Engine/World.h"
+#include "SWeapon.h"
+#include "Components/CapsuleComponent.h"
+#include "CoopGame.h"
+#include "Components/SHealthComponent.h"
+#include "TimerManager.h"
+
+static float MinHealth = DEFAULT_MIN_HEALTH;
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -17,12 +25,20 @@ ASCharacter::ASCharacter()
 
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetMovementComponent()->GetNavAgentPropertiesRef().bCanJump = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON_CHANNEL, ECR_Ignore);
+
+	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
 	ZoomedFOV = 65.0f;
 	ZoomInterpSpeed = 20.0f;
+
+	WeaponAttachSocketName = "WeaponSocket";
+
+	bDied = false;
+	bIsReloading = false;
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +48,19 @@ void ASCharacter::BeginPlay()
 
 	DefaultFOV = CameraComp->FieldOfView;
 
+	//Spawn a default weapon
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	CurrentWeapon = GetWorld()->SpawnActor < ASWeapon >(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->SetOwner(this);
+		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponAttachSocketName);
+	}
+
+	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -66,6 +95,60 @@ void ASCharacter::EndZoom()
 	bWantsToZoom = false;
 }
 
+void ASCharacter::StartFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StartFire();
+	}
+}
+
+void ASCharacter::StopFire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->StopFire();
+	}
+}
+
+void ASCharacter::ReloadWeapon()
+{
+	bIsReloading = true;
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->ReloadWeapon();
+	}
+
+	GetWorldTimerManager().SetTimer(TimerHandle_TimeTOReload, this, &ASCharacter::SetIsReloading, 2.0f, false);
+}
+
+void ASCharacter::OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta,
+	const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+{
+
+	if (Health <= MinHealth && !bDied)
+	{
+		//Die
+		bDied = true;
+
+		GetMovementComponent()->StopMovementImmediately();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		DetachFromControllerPendingDestroy();
+
+		SetLifeSpan(5.0f);
+	}
+
+}
+
+void ASCharacter::SetIsReloading()
+{
+	
+	bIsReloading = false;
+	GetWorldTimerManager().ClearTimer(TimerHandle_TimeTOReload);
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
@@ -95,6 +178,11 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
+
+	PlayerInputComponent->BindAction("StartFire", IE_Pressed, this, &ASCharacter::StartFire);
+	PlayerInputComponent->BindAction("StartFire", IE_Released, this, &ASCharacter::StopFire);
+
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &ASCharacter::ReloadWeapon);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const
