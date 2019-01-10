@@ -1,0 +1,10 @@
+﻿  Creating makefile for CoopGameEditor (source directory changed)
+  Using Visual Studio 2017 14.16.27023 toolchain (E:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.16.27023) and Windows 10.0.17763.0 SDK (C:\Program Files (x86)\Windows Kits\10).
+  Building 3 actions with 8 processes...
+    [1/3] SGameMode.cpp
+    [2/3] UE4Editor-CoopGame.lib
+       Creating library E:\UE4\CoopGame\CoopGame\CoopGame\CoopGame\Intermediate\Build\Win64\UE4Editor\Development\CoopGame\UE4Editor-CoopGame.lib and object E:\UE4\CoopGame\CoopGame\CoopGame\CoopGame\Intermediate\Build\Win64\UE4Editor\Development\CoopGame\UE4Editor-CoopGame.exp
+    [3/3] UE4Editor-CoopGame.dll
+       Creating library E:\UE4\CoopGame\CoopGame\CoopGame\CoopGame\Intermediate\Build\Win64\UE4Editor\Development\CoopGame\UE4Editor-CoopGame.suppressed.lib and object E:\UE4\CoopGame\CoopGame\CoopGame\CoopGame\Intermediate\Build\Win64\UE4Editor\Development\CoopGame\UE4Editor-CoopGame.suppressed.exp
+  Deploying CoopGameEditor Win64 Development...
+  Total build time: 7.81 seconds (Parallel executor: 1.76 seconds)

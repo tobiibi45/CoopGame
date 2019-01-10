@@ -1,0 +1,49 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+
+/*Objects Surface Types*/
+#define SURFACE_FLESHDEFAULT							SurfaceType1
+#define SURFACE_FLESHVULNERABLE_HEAD					SurfaceType2
+#define SURFACE_FLESHVULNERABLE_CHEST					SurfaceType3
+#define SURFACE_FLESH_TRACKERBOT						SurfaceType4
+
+/*Damage Values*/
+#define PLAYER_BASE_DAMAGE								20.0f
+#define TRACKERBOT_BASE_DAMAGE							10.0f
+#define PLAYER_HEADSHOT_DAMAGE_MULTIPLIER				5.0f
+#define PLAYER_CHEST_DAMAGE_MULTIPLIER					2.50f
+
+/*Weapons*/
+#define COLLISION_WEAPON_CHANNEL						ECC_GameTraceChannel1
+#define DEFAULT_MIN_HEALTH								0.0f
+
+/*Explosion barrels*/
+#define EXPLOSION_BARRELL_FORCE							400.0f
+#define EXPLOSION_BARRELL_HEALTH						50.0f
+#define EXPLOSION_BARRELL_EXPLOSION_RADIUS				250.0f
+#define EXPLOSION_BARRELL_EXPLOSION_DAMAGE				100
+
+/*AI*/
+#define TRACKER_BOT_MOVEMENT_FORCE						3000
+#define MIN_DISTANCE_TO_TARGET							100
+#define TRACKERBOT_EXPLOSION_RADIUS						200
+#define TRACKERBOT_EXPLOSION_DAMAGE						50
+#define TRACKERBOT_SELF_DAMAGE							20
+#define TRACKERBOT_SELF_DAMAGE_INTERVAL					0.25f
+#define TRACKERBOT_DISTANCE_TO_BOTS						1000
+#define TRACKERBOT_DISTANCE_MAX_POWERLEVEL				4
+
+/*PowerUps*/
+#define POWERUP_INTERVAL_DEFAULT						0
+#define POWERUP_TOTAL_NUMBER_OF_TICKS_DEFAULT			0
+#define POWERUP_COOLDOWN_DURATION						5
+
+/*GameMode HordMode*/
+#define HORDMODE_TIME_BETWEEN_ROUNDS_EASY				10
+#define HORDMODE_TIME_BETWEEN_ROUNDS_HARD				2
+#define HORDMODE_TIME_BETWEEN_ROUNDS_DEFAULT			2
+#define HORDMODE_EASY_MULTIPLIER						2
+#define HORDMODE_HARD_MULTIPLIER						4
